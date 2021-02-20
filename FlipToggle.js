@@ -22,7 +22,6 @@ const capitalize = require('lodash.capitalize');
 
 let toValue = 0
 let labelStyle = {}
-
 class FlipToggle extends React.Component {
   static propTypes = {
     value: PropTypes.bool.isRequired,
@@ -43,6 +42,7 @@ class FlipToggle extends React.Component {
     sliderWidth: PropTypes.number,
     sliderHeight: PropTypes.number,
     sliderRadius: PropTypes.number,
+    buttonPadding: PropTypes.number,
     margin: PropTypes.number,
     labelStyle: PropTypes.object,
     changeToggleStateOnLongPress: PropTypes.bool,
@@ -63,6 +63,7 @@ class FlipToggle extends React.Component {
     labelStyle: {},
     buttonRadius: 0,
     sliderRadius: 0,
+    buttonPadding: 0,
     labelStyle: {
       color: 'white'
     },
@@ -85,7 +86,8 @@ class FlipToggle extends React.Component {
     this.dimensions = this.calculateDimensions(this.props);
     this.offsetX = new Animated.Value(0);
     if (this.props.value) {
-      toValue = toValue = this.dimensions.buttonWidth - this.dimensions.translateX;
+      const adjustment = this.props.buttonPadding - 2 // there's some extra space to the right which we remove here
+      toValue = toValue = (this.dimensions.buttonWidth - adjustment) - this.dimensions.translateX;
     } else {
       toValue = 0;
     }
@@ -109,7 +111,8 @@ class FlipToggle extends React.Component {
     this.labelStyle = labelStyle;
     this.dimensions = this.calculateDimensions(currentProps);
     if (currentProps.value) {
-      toValue = toValue = this.dimensions.buttonWidth - this.dimensions.translateX;
+      const adjustment = this.props.buttonPadding - 2 // there's some extra space to the right which we remove here
+      toValue = toValue = (this.dimensions.buttonWidth - adjustment) - this.dimensions.translateX;
     } else {
       toValue = 0;
     }
@@ -197,9 +200,10 @@ class FlipToggle extends React.Component {
   };
 
   render() {
+    let ButtonComponent = this.props.buttonComponent || TouchableOpacity
     return (
       <View style={[styles.container]}>
-        <TouchableOpacity
+        <ButtonComponent
           disabled={this.props.disabled}
           style={{
             justifyContent: 'center',
@@ -222,13 +226,14 @@ class FlipToggle extends React.Component {
               margin: this.dimensions.margin,
               transform: [{ translateX: this.offsetX }],
               position: 'absolute',
-              width: this.dimensions.sliderWidth,
-              height: this.dimensions.sliderHeight,
-              borderRadius: this.dimensions.sliderRadius,
+              width: this.dimensions.sliderWidth - this.props.buttonPadding,
+              height: this.dimensions.sliderHeight - this.props.buttonPadding,
+              marginLeft: this.props.buttonPadding,
+              borderRadius: this.dimensions.sliderRadius * 2,
               backgroundColor: this.setBackgroundColor('slider')
             }}
           />
-        </TouchableOpacity>
+        </ButtonComponent>
       </View>
     );
   }
