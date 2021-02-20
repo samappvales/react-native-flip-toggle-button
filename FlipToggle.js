@@ -20,6 +20,9 @@ import PropTypes from 'prop-types';
 
 const capitalize = require('lodash.capitalize');
 
+let toValue = 0
+let labelStyle = {}
+
 class FlipToggle extends React.Component {
   static propTypes = {
     value: PropTypes.bool.isRequired,
